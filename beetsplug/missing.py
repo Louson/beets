@@ -16,9 +16,9 @@
 """List missing tracks.
 """
 
-import musicbrainzngs
+import musicbrainzez
 
-from musicbrainzngs.musicbrainz import MusicBrainzError
+from musicbrainzez.musicbrainz import MusicBrainzError
 from collections import defaultdict
 from beets.autotag import hooks
 from beets.library import Item
@@ -179,7 +179,7 @@ class MissingPlugin(BeetsPlugin):
                 continue
 
             try:
-                resp = musicbrainzngs.browse_release_groups(artist=artist[1])
+                resp = musicbrainzez.browse_release_groups(artist=artist[1])
                 release_groups = resp['release-group-list']
             except MusicBrainzError as err:
                 self._log.info(

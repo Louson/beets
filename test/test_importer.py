@@ -1888,7 +1888,7 @@ class ImportPretendTest(_common.TestCase, ImportHelper):
 
 def mocked_get_release_by_id(id_, includes=[], release_status=[],
                              release_type=[]):
-    """Mimic musicbrainzngs.get_release_by_id, accepting only a restricted list
+    """Mimic musicbrainzez.get_release_by_id, accepting only a restricted list
     of MB ids (ID_RELEASE_0, ID_RELEASE_1). The returned dict differs only in
     the release title and artist name, so that ID_RELEASE_0 is a closer match
     to the items created by ImportHelper._create_import_dir()."""
@@ -1930,7 +1930,7 @@ def mocked_get_release_by_id(id_, includes=[], release_status=[],
 
 def mocked_get_recording_by_id(id_, includes=[], release_status=[],
                                release_type=[]):
-    """Mimic musicbrainzngs.get_recording_by_id, accepting only a restricted
+    """Mimic musicbrainzez.get_recording_by_id, accepting only a restricted
     list of MB ids (ID_RECORDING_0, ID_RECORDING_1). The returned dict differs
     only in the recording title and artist name, so that ID_RECORDING_0 is a
     closer match to the items created by ImportHelper._create_import_dir()."""
@@ -1955,9 +1955,9 @@ def mocked_get_recording_by_id(id_, includes=[], release_status=[],
     }
 
 
-@patch('musicbrainzngs.get_recording_by_id',
+@patch('musicbrainzez.get_recording_by_id',
        Mock(side_effect=mocked_get_recording_by_id))
-@patch('musicbrainzngs.get_release_by_id',
+@patch('musicbrainzez.get_release_by_id',
        Mock(side_effect=mocked_get_release_by_id))
 class ImportMusicBrainzIdTest(_common.TestCase, ImportHelper):
     """Test the --musicbrainzid argument."""

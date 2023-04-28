@@ -143,7 +143,7 @@ class ParentWorkTest(unittest.TestCase, TestHelper):
         """Set up configuration"""
         self.setup_beets()
         self.load_plugins('parentwork')
-        self.patcher = patch('musicbrainzngs.get_work_by_id',
+        self.patcher = patch('musicbrainzez.get_work_by_id',
                              side_effect=mock_workid_response)
         self.patcher.start()
 

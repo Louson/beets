@@ -17,7 +17,7 @@ from beets.plugins import BeetsPlugin
 from beets.ui import Subcommand
 from beets import ui
 from beets import config
-import musicbrainzngs
+import musicbrainzez
 
 import re
 
@@ -31,11 +31,11 @@ def mb_call(func, *args, **kwargs):
     """
     try:
         return func(*args, **kwargs)
-    except musicbrainzngs.AuthenticationError:
+    except musicbrainzez.AuthenticationError:
         raise ui.UserError('authentication with MusicBrainz failed')
-    except (musicbrainzngs.ResponseError, musicbrainzngs.NetworkError) as exc:
+    except (musicbrainzez.ResponseError, musicbrainzez.NetworkError) as exc:
         raise ui.UserError(f'MusicBrainz API error: {exc}')
-    except musicbrainzngs.UsageError:
+    except musicbrainzez.UsageError:
         raise ui.UserError('MusicBrainz credentials missing')
 
 
@@ -46,7 +46,7 @@ def submit_albums(collection_id, release_ids):
     for i in range(0, len(release_ids), SUBMISSION_CHUNK_SIZE):
         chunk = release_ids[i:i + SUBMISSION_CHUNK_SIZE]
         mb_call(
-            musicbrainzngs.add_releases_to_collection,
+            musicbrainzez.add_releases_to_collection,
             collection_id, chunk
         )
 
@@ -55,7 +55,7 @@ class MusicBrainzCollectionPlugin(BeetsPlugin):
     def __init__(self):
         super().__init__()
         config['musicbrainz']['pass'].redact = True
-        musicbrainzngs.auth(
+        musicbrainzez.auth(
             config['musicbrainz']['user'].as_str(),
             config['musicbrainz']['pass'].as_str(),
         )
@@ -68,7 +68,7 @@ class MusicBrainzCollectionPlugin(BeetsPlugin):
             self.import_stages = [self.imported]
 
     def _get_collection(self):
-        collections = mb_call(musicbrainzngs.get_collections)
+        collections = mb_call(musicbrainzez.get_collections)
         if not collections['collection-list']:
             raise ui.UserError('no collections exist for user')
 
@@ -91,7 +91,7 @@ class MusicBrainzCollectionPlugin(BeetsPlugin):
     def _get_albums_in_collection(self, id):
         def _fetch(offset):
             res = mb_call(
-                musicbrainzngs.get_releases_in_collection,
+                musicbrainzez.get_releases_in_collection,
                 id,
                 limit=FETCH_CHUNK_SIZE,
                 offset=offset
@@ -124,7 +124,7 @@ class MusicBrainzCollectionPlugin(BeetsPlugin):
         for i in range(0, len(remove_me), FETCH_CHUNK_SIZE):
             chunk = remove_me[i:i + FETCH_CHUNK_SIZE]
             mb_call(
-                musicbrainzngs.remove_releases_from_collection,
+                musicbrainzez.remove_releases_from_collection,
                 collection_id, chunk
             )
 

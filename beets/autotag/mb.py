@@ -15,7 +15,7 @@
 """Searches for albums in the MusicBrainz database.
 """
 
-import musicbrainzngs
+import musicbrainzez
 import re
 import traceback
 
@@ -42,8 +42,8 @@ FIELDS_TO_MB_KEYS = {
     'year': 'date',
 }
 
-musicbrainzngs.set_useragent('beets', beets.__version__,
-                             'https://beets.io/')
+musicbrainzez.set_useragent('beets', beets.__version__,
+                            'https://beets.io/')
 
 
 class MusicBrainzAPIError(util.HumanReadableException):
@@ -53,7 +53,7 @@ class MusicBrainzAPIError(util.HumanReadableException):
 
     def __init__(self, reason, verb, query, tb=None):
         self.query = query
-        if isinstance(reason, musicbrainzngs.WebServiceError):
+        if isinstance(reason, musicbrainzez.WebServiceError):
             reason = 'MusicBrainz not reachable'
         super().__init__(reason, verb, tb)
 
@@ -71,14 +71,14 @@ RELEASE_INCLUDES = ['artists', 'media', 'recordings', 'release-groups',
                     'work-level-rels', 'artist-rels', 'isrcs']
 BROWSE_INCLUDES = ['artist-credits', 'work-rels',
                    'artist-rels', 'recording-rels', 'release-rels']
-if "work-level-rels" in musicbrainzngs.VALID_BROWSE_INCLUDES['recording']:
+if "work-level-rels" in musicbrainzez.VALID_BROWSE_INCLUDES['recording']:
     BROWSE_INCLUDES.append("work-level-rels")
 BROWSE_CHUNKSIZE = 100
 BROWSE_MAXTRACKS = 500
 TRACK_INCLUDES = ['artists', 'aliases', 'isrcs']
-if 'work-level-rels' in musicbrainzngs.VALID_INCLUDES['recording']:
+if 'work-level-rels' in musicbrainzez.VALID_INCLUDES['recording']:
     TRACK_INCLUDES += ['work-level-rels', 'artist-rels']
-if 'genres' in musicbrainzngs.VALID_INCLUDES['recording']:
+if 'genres' in musicbrainzez.VALID_INCLUDES['recording']:
     RELEASE_INCLUDES += ['genres']
 
 
@@ -91,7 +91,7 @@ def album_url(albumid):
 
 
 def configure():
-    """Set up the python-musicbrainz-ngs module according to settings
+    """Set up the python-musicbrainzez module according to settings
     from the beets configuration. This should be called at startup.
     """
     hostname = config['musicbrainz']['host'].as_str()
@@ -99,8 +99,8 @@ def configure():
     # Only call set_hostname when a custom server is configured. Since
     # musicbrainz-ngs connects to musicbrainz.org with HTTPS by default
     if hostname != "musicbrainz.org":
-        musicbrainzngs.set_hostname(hostname, https)
-    musicbrainzngs.set_rate_limit(
+        musicbrainzez.set_hostname(hostname, https)
+    musicbrainzez.set_rate_limit(
         config['musicbrainz']['ratelimit_interval'].as_number(),
         config['musicbrainz']['ratelimit'].get(int),
     )
@@ -341,7 +341,7 @@ def album_info(release):
         recording_list = []
         for i in range(0, ntracks, BROWSE_CHUNKSIZE):
             log.debug('Retrieving tracks starting at {}', i)
-            recording_list.extend(musicbrainzngs.browse_recordings(
+            recording_list.extend(musicbrainzez.browse_recordings(
                 release=release['id'], limit=BROWSE_CHUNKSIZE,
                 includes=BROWSE_INCLUDES,
                 offset=i)['recording-list'])
@@ -536,9 +536,9 @@ def match_album(artist, album, tracks=None, extra_tags=None):
 
     try:
         log.debug('Searching for MusicBrainz releases with: {!r}', criteria)
-        res = musicbrainzngs.search_releases(
+        res = musicbrainzez.search_releases(
             limit=config['musicbrainz']['searchlimit'].get(int), **criteria)
-    except musicbrainzngs.MusicBrainzError as exc:
+    except musicbrainzez.MusicBrainzError as exc:
         raise MusicBrainzAPIError(exc, 'release search', criteria,
                                   traceback.format_exc())
     for release in res['release-list']:
@@ -562,9 +562,9 @@ def match_track(artist, title):
         return
 
     try:
-        res = musicbrainzngs.search_recordings(
+        res = musicbrainzez.search_recordings(
             limit=config['musicbrainz']['searchlimit'].get(int), **criteria)
-    except musicbrainzngs.MusicBrainzError as exc:
+    except musicbrainzez.MusicBrainzError as exc:
         raise MusicBrainzAPIError(exc, 'recording search', criteria,
                                   traceback.format_exc())
     for recording in res['recording-list']:
@@ -592,12 +592,12 @@ def album_for_id(releaseid):
         log.debug('Invalid MBID ({0}).', releaseid)
         return
     try:
-        res = musicbrainzngs.get_release_by_id(albumid,
+        res = musicbrainzez.get_release_by_id(albumid,
                                                RELEASE_INCLUDES)
-    except musicbrainzngs.ResponseError:
+    except musicbrainzez.ResponseError:
         log.debug('Album ID match failed.')
         return None
-    except musicbrainzngs.MusicBrainzError as exc:
+    except musicbrainzez.MusicBrainzError as exc:
         raise MusicBrainzAPIError(exc, 'get release by ID', albumid,
                                   traceback.format_exc())
     return album_info(res['release'])
@@ -612,11 +612,11 @@ def track_for_id(releaseid):
         log.debug('Invalid MBID ({0}).', releaseid)
         return
     try:
-        res = musicbrainzngs.get_recording_by_id(trackid, TRACK_INCLUDES)
-    except musicbrainzngs.ResponseError:
+        res = musicbrainzez.get_recording_by_id(trackid, TRACK_INCLUDES)
+    except musicbrainzez.ResponseError:
         log.debug('Track ID match failed.')
         return None
-    except musicbrainzngs.MusicBrainzError as exc:
+    except musicbrainzez.MusicBrainzError as exc:
         raise MusicBrainzAPIError(exc, 'get recording by ID', trackid,
                                   traceback.format_exc())
     return track_info(res['recording'])

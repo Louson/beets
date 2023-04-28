@@ -20,14 +20,14 @@ and work composition date
 from beets import ui
 from beets.plugins import BeetsPlugin
 
-import musicbrainzngs
+import musicbrainzez
 
 
 def direct_parent_id(mb_workid, work_date=None):
     """Given a Musicbrainz work id, find the id one of the works the work is
     part of and the first composition date it encounters.
     """
-    work_info = musicbrainzngs.get_work_by_id(mb_workid,
+    work_info = musicbrainzez.get_work_by_id(mb_workid,
                                               includes=["work-rels",
                                                         "artist-rels"])
     if 'artist-relation-list' in work_info['work'] and work_date is None:
@@ -62,7 +62,7 @@ def find_parentwork_info(mb_workid):
     the artist relations, and the composition date for a work's parent work.
     """
     parent_id, work_date = work_parent_id(mb_workid)
-    work_info = musicbrainzngs.get_work_by_id(parent_id,
+    work_info = musicbrainzez.get_work_by_id(parent_id,
                                               includes=["artist-rels"])
     return work_info, work_date
 
@@ -180,7 +180,7 @@ add one at https://musicbrainz.org/recording/{}', item, item.mb_trackid)
         if force or not hasparent or work_changed:
             try:
                 work_info, work_date = find_parentwork_info(item.mb_workid)
-            except musicbrainzngs.musicbrainz.WebServiceError as e:
+            except musicbrainzez.musicbrainz.WebServiceError as e:
                 self._log.debug("error fetching work: {}", e)
                 return
             parent_info = self.get_info(item, work_info)

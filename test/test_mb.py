@@ -577,7 +577,7 @@ class ArtistFlatteningTest(_common.TestCase):
 
 class MBLibraryTest(unittest.TestCase):
     def test_match_track(self):
-        with mock.patch('musicbrainzngs.search_recordings') as p:
+        with mock.patch('musicbrainzez.search_recordings') as p:
             p.return_value = {
                 'recording-list': [{
                     'title': 'foo',
@@ -593,13 +593,13 @@ class MBLibraryTest(unittest.TestCase):
 
     def test_match_album(self):
         mbid = 'd2a6f856-b553-40a0-ac54-a321e8e2da99'
-        with mock.patch('musicbrainzngs.search_releases') as sp:
+        with mock.patch('musicbrainzez.search_releases') as sp:
             sp.return_value = {
                 'release-list': [{
                     'id': mbid,
                 }],
             }
-            with mock.patch('musicbrainzngs.get_release_by_id') as gp:
+            with mock.patch('musicbrainzez.get_release_by_id') as gp:
                 gp.return_value = {
                     'release': {
                         'title': 'hi',
@@ -637,13 +637,13 @@ class MBLibraryTest(unittest.TestCase):
                 self.assertEqual(ai.album, 'hi')
 
     def test_match_track_empty(self):
-        with mock.patch('musicbrainzngs.search_recordings') as p:
+        with mock.patch('musicbrainzez.search_recordings') as p:
             til = list(mb.match_track(' ', ' '))
             self.assertFalse(p.called)
             self.assertEqual(til, [])
 
     def test_match_album_empty(self):
-        with mock.patch('musicbrainzngs.search_releases') as p:
+        with mock.patch('musicbrainzez.search_releases') as p:
             ail = list(mb.match_album(' ', ' '))
             self.assertFalse(p.called)
             self.assertEqual(ail, [])

@@ -86,7 +86,7 @@ setup(
 
     install_requires=[
         'unidecode>=1.3.6',
-        'musicbrainzngs>=0.4',
+        'musicbrainzez>=1.0',
         'pyyaml',
         'mediafile>=0.9.0',
         'confuse>=1.5.0',
@@ -114,6 +114,9 @@ setup(
             'python3-discogs-client',
             'py7zr',
         ],
+        'doc': [
+            'sphinx'
+            ],
         'lint': [
             'flake8',
             'flake8-docstrings',
