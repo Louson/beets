@@ -85,6 +85,7 @@ setup(
     },
     install_requires=[
         "unidecode>=1.3.6",
+        "mbzero>=0.1",
         "musicbrainzngs>=0.4",
         "pyyaml",
         "mediafile>=0.12.0",
